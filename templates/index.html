@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CricX - Cricket Statistics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(90deg, #198754, #28a745);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white !important;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link i {
+            margin-right: 0.5rem;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+
+        /* Home Tab - Player Cards */
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .player-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .player-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .player-info {
+            padding: 1.5rem;
+        }
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .player-country {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .stat-value {
+            font-weight: bold;
+            color: #198754;
+        }
+
+        /* Search Tab */
+        .search-container {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 4rem 0;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .search-content {
+            color: white;
+            text-align: center;
+        }
+        .search-content h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .search-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .input-group {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        .form-control {
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+        }
+        .btn-search {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            background: linear-gradient(90deg, #198754, #28a745);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Comparison Tab */
+        .comparison-container {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 4rem 0;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .comparison-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .comparison-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-inputs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1.5rem;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .vs-badge {
+            background: #198754;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .comparison-results {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .player-comparison-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .player-comparison-card {
+            text-align: center;
+        }
+
+        .player-comparison-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 4px solid #198754;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-comparison-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #198754;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-comparison-country {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-comparison-role {
+            font-size: 1rem;
+            color: #495057;
+        }
+
+        .comparison-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        .comparison-chart-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .stat-difference {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .stat-difference.positive {
+            color: #198754;
+        }
+
+        .stat-difference.negative {
+            color: #dc3545;
+        }
+
+        /* Statistics Tables */
+        .stat-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+        }
+        .stat-table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .stat-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .stat-section {
+            margin-bottom: 2rem;
+        }
+        .stat-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #198754;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #198754;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #198754;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(90deg, #343a40, #495057);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        footer .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        footer .social-icons a:hover {
+            color: #198754;
+            transform: translateY(-3px);
+        }
+
+        /* Add these styles to your existing CSS */
+        .player-thumbnail {
+            border: 2px solid #198754;
+            transition: transform 0.2s ease;
+        }
+        
+        .player-thumbnail:hover {
+            transform: scale(1.1);
+        }
+        
+        .table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table thead th {
+            background: linear-gradient(90deg, #198754, #28a745);
+            color: white;
+            font-weight: 500;
+            border: none;
+        }
+        
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, #198754, #28a745);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-success {
+            border-color: #198754;
+            color: #198754;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-success:hover {
+            background: linear-gradient(90deg, #198754, #28a745);
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-success:disabled {
+            border-color: #6c757d;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .btn-outline-success:disabled:hover {
+            background: none;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Add these styles to your existing CSS */
+        .player-profile-container {
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .player-header-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .player-image-container {
+            width: 100%;
+            padding-bottom: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-profile-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info {
+            padding: 1rem;
+        }
+
+        .player-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #198754;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-country {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-role {
+            font-size: 1.1rem;
+            color: #495057;
+            margin-bottom: 1.5rem;
+        }
+
+        .player-rankings {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .ranking-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .ranking-label {
+            display: block;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .ranking-value {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #198754;
+        }
+
+        .statistics-section {
+            margin-top: 2rem;
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-table {
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-table th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .stat-table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .stat-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .stat-table tr:hover {
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-cricket-bat-ball me-2"></i>
+                CricX
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home" data-bs-toggle="tab">
+                            <i class="fas fa-home"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#search" data-bs-toggle="tab">
+                            <i class="fas fa-search"></i>Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#comparison" data-bs-toggle="tab">
+                            <i class="fas fa-balance-scale"></i>Comparison
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="container dashboard-container">
+        <div class="tab-content">
+            <!-- Home Tab -->
+            <div class="tab-pane fade show active" id="home">
+                <h2 class="mb-4">Featured Players</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Country</th>
+                                <th>Role</th>
+                                <th>Batting Avg</th>
+                                <th>Bowling Avg</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="featuredPlayers">
+                            <!-- Player rows will be dynamically loaded here -->
+                        </tbody>
+                    </table>
+                    </div>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        <span id="pageInfo" class="text-muted">Page 1 of 2</span>
+                </div>
+                    <div>
+                        <button id="prevPage" class="btn btn-outline-success me-2" disabled>
+                            <i class="fas fa-chevron-left me-1"></i>Previous
+                        </button>
+                        <button id="nextPage" class="btn btn-success">
+                            Next<i class="fas fa-chevron-right ms-1"></i>
+                        </button>
+            </div>
+        </div>
+    </div>
+
+            <!-- Search Tab -->
+            <div class="tab-pane fade" id="search">
+                <div class="search-container">
+                    <div class="search-content">
+                        <h1>Discover Cricket Players</h1>
+                        <p>Search for any cricket player to view their detailed statistics and rankings</p>
+                        <div class="search-form">
+                            <div class="input-group">
+                                <input type="text" id="playerName" class="form-control" placeholder="Enter player name...">
+                                <button class="btn btn-success btn-search" onclick="searchPlayer()">
+                                    <i class="fas fa-search me-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="playerProfile" style="display: none;">
+                    <!-- Player profile content will be loaded here -->
+                </div>
+    </div>
+
+            <!-- Comparison Tab -->
+            <div class="tab-pane fade" id="comparison">
+                <div class="comparison-container">
+                    <div class="comparison-header">
+                        <h1>Player Comparison</h1>
+                        <p>Compare statistics between two cricket players</p>
+                    </div>
+                    <div class="comparison-inputs">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" id="player1Name" class="form-control" placeholder="Enter first player name...">
+                        </div>
+                        <div class="vs-badge">VS</div>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" id="player2Name" class="form-control" placeholder="Enter second player name...">
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button class="btn btn-success btn-lg" onclick="comparePlayers()">
+                            <i class="fas fa-balance-scale me-2"></i>Compare Players
+                        </button>
+                    </div>
+                </div>
+                <div id="playerComparison" style="display: none;">
+                    <!-- Comparison results will be loaded here -->
+                </div>
+            </div>
+        </div>
+        <div id="loadingSpinner" class="loading-spinner"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="social-icons mb-3">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p>&copy; 2024 CricX. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Global variables for pagination
+        let allPlayers = [];
+        let currentPage = 1;
+        const playersPerPage = 15;
+
+        // Load featured players on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedPlayers();
+            
+            // Initialize tab switching
+            const tabLinks = document.querySelectorAll('.nav-link');
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    
+                    // Remove active class from all tabs and links
+                    document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('show', 'active'));
+                    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                    
+                    // Add active class to current tab and link
+                    document.getElementById(targetId).classList.add('show', 'active');
+                    this.classList.add('active');
+            });
+        });
+
+            // Add event listeners for pagination buttons
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayPlayers();
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < Math.ceil(allPlayers.length / playersPerPage)) {
+                    currentPage++;
+                    displayPlayers();
+                }
+            });
+        });
+
+        function loadFeaturedPlayers() {
+            const featuredPlayers = [
+                'Virat Kohli',
+                'Steve Smith',
+                'Kane Williamson',
+                'Joe Root',
+                'Rohit Sharma',
+                'Pat Cummins',
+                'Jasprit Bumrah',
+                'Ravichandran Ashwin',
+                'Ben Stokes',
+                'Kagiso Rabada',
+                'Babar Azam',
+                'Quinton de Kock',
+                'David Warner',
+                'Mitchell Starc',
+                'Trent Boult',
+                'Mohammed Shami',
+                'Rashid Khan',
+                'Jos Buttler',
+                'KL Rahul',
+                'Rishabh Pant',
+                'Shakib Al Hasan',
+                'Mohammed Rizwan',
+                'Shaheen Afridi',
+                'Ravindra Jadeja',
+                'Marnus Labuschagne',
+                'Travis Head',
+                'Kane Williamson',
+                'Joe Root',
+                'Rohit Sharma',
+                'Pat Cummins'
+            ];
+
+            const playerTable = document.getElementById('featuredPlayers');
+            playerTable.innerHTML = '<tr><td colspan="7" class="text-center">Loading players...</td></tr>';
+
+            // Initialize allPlayers array
+            allPlayers = [];
+
+            // Fetch and display players one by one
+            featuredPlayers.forEach((player, index) => {
+                fetch(`/players/${encodeURIComponent(player)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch ${player}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Add player to allPlayers array
+                        allPlayers.push(data);
+                        
+                        // If this is the first player, clear the loading message
+                        if (index === 0) {
+                            playerTable.innerHTML = '';
+                        }
+
+                        // Create and append the row
+                        const row = createPlayerRow(data);
+                        playerTable.appendChild(row);
+
+                        // Update pagination controls
+                        updatePaginationControls();
+                    })
+                    .catch(error => {
+                        console.error(`Error loading player ${player}:`, error);
+                        // If this is the first player and there's an error, show error message
+                        if (index === 0) {
+                            playerTable.innerHTML = `
+                                <tr>
+                                    <td colspan="7" class="text-center text-danger">
+                                        Error loading players. Please try refreshing the page.
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                    });
+            });
+        }
+
+        function displayPlayers() {
+            const playerTable = document.getElementById('featuredPlayers');
+            if (!playerTable) {
+                console.error('Player table element not found');
+                return;
+            }
+
+            playerTable.innerHTML = '';
+
+            if (!allPlayers || allPlayers.length === 0) {
+                playerTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">No players found</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Calculate start and end indices for current page
+            const startIndex = (currentPage - 1) * playersPerPage;
+            const endIndex = Math.min(startIndex + playersPerPage, allPlayers.length);
+
+            // Display players for current page
+            for (let i = startIndex; i < endIndex; i++) {
+                const player = allPlayers[i];
+                if (player) {
+                    const row = createPlayerRow(player);
+                    playerTable.appendChild(row);
+                }
+            }
+
+            // Update pagination controls
+            updatePaginationControls();
+        }
+
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(allPlayers.length / playersPerPage);
+            const pageInfo = document.getElementById('pageInfo');
+            const prevButton = document.getElementById('prevPage');
+            const nextButton = document.getElementById('nextPage');
+
+            if (pageInfo) {
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            }
+            
+            if (prevButton) {
+                prevButton.disabled = currentPage === 1;
+            }
+            
+            if (nextButton) {
+                nextButton.disabled = currentPage === totalPages;
+            }
+        }
+
+        function createPlayerRow(player) {
+            if (!player) return null;
+
+            const row = document.createElement('tr');
+            
+            // Get batting and bowling averages
+            const battingAvg = player.batting_stats?.test?.average || player.batting_stats?.odi?.average || '-';
+            const bowlingAvg = player.bowling_stats?.test?.average || player.bowling_stats?.odi?.average || '-';
+            
+            row.innerHTML = `
+                <td>
+                    <img src="${player.image || ''}" class="player-thumbnail" alt="${player.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                </td>
+                <td>${player.name || '-'}</td>
+                <td>${player.country || '-'}</td>
+                <td>${player.role || '-'}</td>
+                <td>${battingAvg}</td>
+                <td>${bowlingAvg}</td>
+                <td>
+                    <button class="btn btn-sm btn-success" onclick="searchPlayerFromHome('${player.name}')">
+                        <i class="fas fa-search me-1"></i>View Stats
+                    </button>
+                </td>
+            `;
+            return row;
+        }
+
+        function searchPlayerFromHome(playerName) {
+            // Switch to search tab
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('a[href="#search"]').classList.add('active');
+            
+            document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('show', 'active'));
+            document.getElementById('search').classList.add('show', 'active');
+            
+            // Set the search input value and trigger search
+            document.getElementById('playerName').value = playerName;
+            searchPlayer();
+        }
+
+        function searchPlayer() {
+            const playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Please enter a player name');
+                return;
+            }
+
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('playerProfile').style.display = 'none';
+
+            fetch(`/players/${encodeURIComponent(playerName)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Player not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    document.getElementById('playerProfile').style.display = 'block';
+                    document.getElementById('playerProfile').innerHTML = createPlayerProfile(data);
+                    createCharts(data);
+                })
+                .catch(error => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    alert(error.message || 'Error fetching player data. Please try again.');
+                });
+        }
+
+        function createPlayerProfile(data) {
+            return `
+                <div class="player-profile-container">
+                    <!-- Player Header Section -->
+                    <div class="player-header-section">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="player-image-container">
+                                    <img src="${data.image || ''}" class="player-profile-image" alt="${data.name}">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="player-info">
+                                    <h1 class="player-name">${data.name}</h1>
+                                    <p class="player-country">${data.country}</p>
+                                    <p class="player-role">${data.role}</p>
+                                    <div class="player-rankings">
+                                        <div class="ranking-item">
+                                            <span class="ranking-label">Test Batting</span>
+                                            <span class="ranking-value">${data.rankings.batting.test || '-'}</span>
+                                        </div>
+                                        <div class="ranking-item">
+                                            <span class="ranking-label">ODI Batting</span>
+                                            <span class="ranking-value">${data.rankings.batting.odi || '-'}</span>
+                                        </div>
+                                        <div class="ranking-item">
+                                            <span class="ranking-label">T20 Batting</span>
+                                            <span class="ranking-value">${data.rankings.batting.t20 || '-'}</span>
+                                        </div>
+                                        <div class="ranking-item">
+                                            <span class="ranking-label">Test Bowling</span>
+                                            <span class="ranking-value">${data.rankings.bowling.test || '-'}</span>
+                                        </div>
+                                        <div class="ranking-item">
+                                            <span class="ranking-label">ODI Bowling</span>
+                                            <span class="ranking-value">${data.rankings.bowling.odi || '-'}</span>
+                                        </div>
+                                        <div class="ranking-item">
+                                            <span class="ranking-label">T20 Bowling</span>
+                                            <span class="ranking-value">${data.rankings.bowling.t20 || '-'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Section -->
+                    <div class="statistics-section">
+                        <div class="row">
+                            <!-- Batting Statistics -->
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <h3 class="stat-title">Batting Statistics</h3>
+                                    <div class="table-responsive">
+                                        <table class="stat-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Format</th>
+                                                    <th>Matches</th>
+                                                    <th>Runs</th>
+                                                    <th>Highest</th>
+                                                    <th>Average</th>
+                                                    <th>Strike Rate</th>
+                                                    <th>100s</th>
+                                                    <th>50s</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${Object.entries(data.batting_stats).map(([format, stats]) => `
+                                                    <tr>
+                                                        <td>${format.toUpperCase()}</td>
+                                                        <td>${stats.matches}</td>
+                                                        <td>${stats.runs}</td>
+                                                        <td>${stats.highest_score}</td>
+                                                        <td>${stats.average}</td>
+                                                        <td>${stats.strike_rate}</td>
+                                                        <td>${stats.hundreds}</td>
+                                                        <td>${stats.fifties}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="battingChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bowling Statistics -->
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <h3 class="stat-title">Bowling Statistics</h3>
+                                    <div class="table-responsive">
+                                        <table class="stat-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Format</th>
+                                                    <th>Balls</th>
+                                                    <th>Runs</th>
+                                                    <th>Wickets</th>
+                                                    <th>Best</th>
+                                                    <th>Economy</th>
+                                                    <th>5W</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${Object.entries(data.bowling_stats).map(([format, stats]) => `
+                                                    <tr>
+                                                        <td>${format.toUpperCase()}</td>
+                                                        <td>${stats.balls}</td>
+                                                        <td>${stats.runs}</td>
+                                                        <td>${stats.wickets}</td>
+                                                        <td>${stats.best_bowling_innings}</td>
+                                                        <td>${stats.economy}</td>
+                                                        <td>${stats.five_wickets}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="bowlingChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createCharts(data) {
+            // Batting Chart
+            const battingCtx = document.getElementById('battingChart').getContext('2d');
+            new Chart(battingCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.batting_stats),
+                    datasets: [{
+                        label: 'Runs',
+                        data: Object.values(data.batting_stats).map(stats => stats.runs),
+                        backgroundColor: 'rgba(25, 135, 84, 0.5)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Average',
+                        data: Object.values(data.batting_stats).map(stats => stats.average),
+                        backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Batting Performance'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Bowling Chart
+            const bowlingCtx = document.getElementById('bowlingChart').getContext('2d');
+            new Chart(bowlingCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.bowling_stats),
+                    datasets: [{
+                        label: 'Wickets',
+                        data: Object.values(data.bowling_stats).map(stats => stats.wickets),
+                        backgroundColor: 'rgba(25, 135, 84, 0.5)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Economy',
+                        data: Object.values(data.bowling_stats).map(stats => stats.economy),
+                        backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Bowling Performance'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function createComparisonView(player1, player2) {
+            return `
+                <div class="comparison-results">
+                    <!-- Player Comparison Header -->
+                    <div class="player-comparison-header">
+                        <div class="player-comparison-card">
+                            <img src="${player1.image}" class="player-comparison-image" alt="${player1.name}">
+                            <h2 class="player-comparison-name">${player1.name}</h2>
+                            <p class="player-comparison-country">${player1.country}</p>
+                            <p class="player-comparison-role">${player1.role}</p>
+                        </div>
+                        <div class="player-comparison-card">
+                            <img src="${player2.image}" class="player-comparison-image" alt="${player2.name}">
+                            <h2 class="player-comparison-name">${player2.name}</h2>
+                            <p class="player-comparison-country">${player2.country}</p>
+                            <p class="player-comparison-role">${player2.role}</p>
+                        </div>
+                    </div>
+
+                    <!-- Batting Comparison -->
+                    <div class="comparison-stats">
+                        <div class="stat-card">
+                            <h3 class="stat-title">Batting Statistics Comparison</h3>
+                            <div class="table-responsive">
+                                <table class="comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Format</th>
+                                            <th>Stat</th>
+                                            <th>${player1.name}</th>
+                                            <th>${player2.name}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${generateComparisonRows('batting', player1, player2)}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="comparison-chart-container">
+                                <canvas id="battingComparisonChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bowling Comparison -->
+                    <div class="comparison-stats">
+                        <div class="stat-card">
+                            <h3 class="stat-title">Bowling Statistics Comparison</h3>
+                            <div class="table-responsive">
+                                <table class="comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Format</th>
+                                            <th>Stat</th>
+                                            <th>${player1.name}</th>
+                                            <th>${player2.name}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${generateComparisonRows('bowling', player1, player2)}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="comparison-chart-container">
+                                <canvas id="bowlingComparisonChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateComparisonRows(statType, player1, player2) {
+            const formats = ['test', 'odi', 't20'];
+            const stats = statType === 'batting' 
+                ? ['matches', 'runs', 'highest_score', 'average', 'strike_rate', 'hundreds', 'fifties']
+                : ['balls', 'runs', 'wickets', 'best_bowling_innings', 'economy', 'five_wickets'];
+            
+            let rows = '';
+            formats.forEach(format => {
+                stats.forEach(stat => {
+                    const p1Value = player1[`${statType}_stats`][format]?.[stat] || '-';
+                    const p2Value = player2[`${statType}_stats`][format]?.[stat] || '-';
+                    
+                    rows += `
+                        <tr>
+                            <td>${format.toUpperCase()}</td>
+                            <td>${stat.replace(/_/g, ' ').toUpperCase()}</td>
+                            <td>${p1Value}</td>
+                            <td>${p2Value}</td>
+                        </tr>
+                    `;
+                });
+            });
+            return rows;
+        }
+
+        function createComparisonCharts(player1, player2) {
+            // Batting Comparison Chart
+            const battingCtx = document.getElementById('battingComparisonChart').getContext('2d');
+            new Chart(battingCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Test', 'ODI', 'T20'],
+                    datasets: [{
+                        label: `${player1.name} - Runs`,
+                        data: ['test', 'odi', 't20'].map(format => 
+                            player1.batting_stats[format]?.runs || 0
+                        ),
+                        backgroundColor: 'rgba(25, 135, 84, 0.5)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: `${player2.name} - Runs`,
+                        data: ['test', 'odi', 't20'].map(format => 
+                            player2.batting_stats[format]?.runs || 0
+                        ),
+                        backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Runs Comparison'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Bowling Comparison Chart
+            const bowlingCtx = document.getElementById('bowlingComparisonChart').getContext('2d');
+            new Chart(bowlingCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Test', 'ODI', 'T20'],
+                    datasets: [{
+                        label: `${player1.name} - Wickets`,
+                        data: ['test', 'odi', 't20'].map(format => 
+                            player1.bowling_stats[format]?.wickets || 0
+                        ),
+                        backgroundColor: 'rgba(25, 135, 84, 0.5)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: `${player2.name} - Wickets`,
+                        data: ['test', 'odi', 't20'].map(format => 
+                            player2.bowling_stats[format]?.wickets || 0
+                        ),
+                        backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Wickets Comparison'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function comparePlayers() {
+            const player1Name = document.getElementById('player1Name').value.trim();
+            const player2Name = document.getElementById('player2Name').value.trim();
+            
+            if (!player1Name || !player2Name) {
+                alert('Please enter both player names');
+                return;
+            }
+
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('playerComparison').style.display = 'none';
+
+            Promise.all([
+                fetch(`/players/${encodeURIComponent(player1Name)}`).then(response => {
+                    if (!response.ok) throw new Error(`Player not found: ${player1Name}`);
+                    return response.json();
+                }),
+                fetch(`/players/${encodeURIComponent(player2Name)}`).then(response => {
+                    if (!response.ok) throw new Error(`Player not found: ${player2Name}`);
+                    return response.json();
+                })
+            ])
+            .then(([player1, player2]) => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('playerComparison').style.display = 'block';
+                document.getElementById('playerComparison').innerHTML = createComparisonView(player1, player2);
+                createComparisonCharts(player1, player2);
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                alert(error.message || 'Error fetching player data. Please try again.');
+            });
+        }
+
+        // Add enter key support for search and comparison
+        document.getElementById('playerName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchPlayer();
+        });
+        document.getElementById('player1Name').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') comparePlayers();
+        });
+        document.getElementById('player2Name').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') comparePlayers();
+        });
+    </script>
+</body>
+</html>
